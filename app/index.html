@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <title>ChatGPT AHDS Explorer</title>
+  <link rel="SHORTCUT ICON" href="./favicon.svg" type="image/x-icon">
+
+   <!-- msal.min.js can be used in the place of msal.js; included msal.js to make debug easy -->
+  <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.js"
+    integrity="sha384-o4ufwq3oKqc7IoCcR08YtZXmgOljhTggRwxP2CLbSqeXGtitAxwYaUln/05nJjit"
+    crossorigin="anonymous"></script>
+  
+  <!-- adding Bootstrap 4 for UI components  -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="SHORTCUT ICON" href="https://c.s-microsoft.com/favicon.ico?v2" type="image/x-icon">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+ 
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="/">AHDS Explorer powered by ChatGPT</a>
+    <div class="btn-group ml-auto dropleft">
+      <a class="navbar-brand" id="WelcomeMessage" href="/">Please sign-in to access the explorer</a>
+      &nbsp;<button type="button" id="SignIn" class="btn btn-secondary" onclick="signIn()">
+        Sign In
+      </button>
+    </div>
+  </nav>
+  <div class="container" id="bodycontainer" style="display:none">
+    <form>
+      <div class="form-group" id="querydiv">
+          <textarea class="form-control" id="gquery" rows="4" placeholder="What do you want to do?"></textarea>
+      </div>
+    </form>
+    <div class="container" id="airespcontainer" style="display:none">
+      <div class="row p-3 mb-2 bg-primary text-white" style="margin:none">
+        <div class="col-lg-2">
+          AI Generated FHIR Query:
+        </div>
+        <div id="airesp" class="col-lg-8">
+        </div>
+      </div> 
+    </div>
+  </div>
+  <div class="container" id="fhirrespcontainer" style="display:none">
+  </div>
+  <div id="myModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered justify-content-center" role="document">
+        <span class="fa fa-spinner fa-spin fa-3x"></span>
+    </div>
+</div>
+<div class="modal fade" id="summarymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Patient Summary</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="summarybody" class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- importing bootstrap.js and supporting js libraries -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+
+  <!-- importing app scripts (load order is important) -->
+  <script type="text/javascript" src="./readconfig.js"></script>
+  <script type="text/javascript" src="./fhirConfig.js"></script>
+  <script type="text/javascript" src="./aiConfig.js"></script>
+  <script type="text/javascript" src="./authConfig.js"></script>
+  <script type="text/javascript" src="./resourcetemplates.js"></script>
+  <script type="text/javascript" src="./ui.js"></script>
+
+  <!-- <script type="text/javascript" src="./authRedirect.js"></script>   -->
+  <!-- uncomment the above line and comment the line below if you would like to use the redirect flow -->
+  <script type="text/javascript" src="./authPopup.js"></script>
+  <script type="text/javascript" src="./fhir.js"></script>
+  <script type="text/javascript" src="./ai.js"></script>
+  <script>
+    $( document ).ready(function() {
+       $("#gquery").focus();
+       $("#gquery").keyup(function(e) {
+        if ((e.keyCode == 13 || e.keyCode == 10) && !e.shiftKey) {
+          $('#myModal').modal('show');
+          let gptquery=$("#gquery").val();
+          queryAI(gptquery);
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
