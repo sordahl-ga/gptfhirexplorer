@@ -10,13 +10,17 @@ function constructCards(data) {
                             <div style="display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%"><p style="margin-bottom: 0px">${item["resource"]["id"]}</p></div>`
                 switch(item["resource"]["resourceType"]) {
                     case "Patient":
-                    output+=patientTemplate(item);
-                    break;
+                        output+=patientTemplate(item);
+                        break;
                     case "Device":
-                    output+=baseTemplate(item);
-                    break;
+                        output+=baseTemplate(item);
+                        break;
                     case "Observation":
                         output+=observationTemplate(item);
+                        break;
+                    case "Immunization":
+                        output+=immunizationTemplate(item);
+                        break;
                     default:
                         output+=baseTemplate(item);
                     // code block
@@ -117,6 +121,37 @@ function observationTemplate(item) {
             }
             retval+="</p>";
         }
+        if (item["resource"]["subject"]["reference"]) {
+            var patid=item["resource"]["subject"]["reference"].substring(8);
+            retval+=`<a href="javascript:generateSummary('${patid}')" class="btn btn-primary">Generate Summary</a>`;
+        }    
+    }
+    return retval;
+}
+function immunizationTemplate(item) {
+    let retval='';
+    if (item["resource"]["vaccineCode"] && item["resource"]["vaccineCode"]["coding"]) {
+        var i = item["resource"]["vaccineCode"]["coding"][0];
+        retval=`<p class="card-text">`;
+        if (i["code"]) retval+=i["code"]+"-";
+        if (i["display"]) retval+=i["display"];
+        if (i["system"]) {
+            if (i["system"].includes("cvx")) {
+                retval+=" (CVX)";
+            } else if(i["system"].includes("snomed")) {
+                retval+=" (SNOMED)";
+            }
+             
+        }
+        retval+="</p>";
+        if (item["resource"]["occurrenceDateTime"]) {
+            var d = new Date(Date.parse(item["resource"]["occurrenceDateTime"]));
+            retval+=`<p class="card-text">Date/Time: ${d.toUTCString()}</p>`;
+        }
+        if (item["resource"]["patient"]["reference"]) {
+            var patid=item["resource"]["patient"]["reference"].substring(8);
+            retval+=`<a href="javascript:generateSummary('${patid}')" class="btn btn-primary">Generate Summary</a>`;
+        }    
     }
     return retval;
 }

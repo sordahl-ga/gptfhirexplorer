@@ -16,6 +16,9 @@ function showWelcomeMessage(username) {
 function mineAIResponseforFHIR(response,data) {
     var retval={};
     var airesp = response["choices"][0]["message"]["content"];
+    if (data.startsWith('*')) {
+        return airesp;
+    }
     var lines = airesp.split('\n');
     var newfhirquery=""
     var body = "";
@@ -44,6 +47,10 @@ function mineAIResponseforFHIR(response,data) {
     newfhirquery = newfhirquery.replace("[base]", fhirConfig.fhirEndpoint);
     if (newfhirquery.startsWith("GET ")) newfhirquery = newfhirquery.substring(4);
     if (newfhirquery.startsWith("POST ")) newfhirquery = newfhirquery.substring(5);
+    //Filter Hacks until custom model can be trained
+    if (newfhirquery.includes("Immunization?") && newfhirquery.includes("code=")) {
+        newfhirquery=newfhirquery.replace("code=","vaccine-code=");
+    } 
     retval["query"] = newfhirquery;
     retval["method"] = (body.length > 1 ? "POST" : "GET");
     retval["body"] = body;
@@ -79,10 +86,12 @@ function updateUI(response, endpoint, data) {
                 queryFHIR(response);
             } else {
                 $('#myModal').modal('hide');
-                sumbody.innerHTML="";
-                output="<pre>" + response + "</pre>";
-                sumbody.insertAdjacentHTML('afterbegin',output); 
-                $('#summarymodal').modal('show');
+                fhirrespDiv.innerHTML='';
+                airespDiv.style.display='none';
+                var output="<pre style='white-space: pre-wrap'>" + response + "</pre>";
+                // insert the HTML using .insertAdjacentHTML
+                fhirrespDiv.insertAdjacentHTML('afterbegin', output)
+                fhirrespDiv.style.display = 'initial';
             }
         }
     }

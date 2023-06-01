@@ -21,7 +21,7 @@ app.use(express.static('app', {
   }));
 // Set up a route for index.html
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname + '/index.html'));
+    res.sendFile(path.join(__dirname + '/app/index.html'));
 });
 
 // Start the server.
