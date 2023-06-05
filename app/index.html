@@ -32,12 +32,16 @@
     </div>
   </nav>
   <div class="container" id="bodycontainer" style="display:none">
-    <form>
-      <div class="form-group" id="querydiv">
-          <textarea class="form-control" id="gquery" rows="4" placeholder="What do you want to do?"></textarea>
-      </div>
-    </form>
-    <div class="container" id="airespcontainer" style="display:none">
+    <div class="row p-3" style="margin:none">    
+        <div class="col">
+          <textarea class="form-control" id="gquery" rows="4" placeholder="What should I ask the FHIR Server for? (You can also prefix text with an `*` to bypass FHIR query and talk directly to AI)"></textarea>
+        </div>
+        <div class="col-auto" valign="bottom">
+          <button class="btn btn-primary btn-sm" onClick="sendit()">Send</button>       
+        </div>
+    </div> 
+   </div>
+   <div class="container" id="airespcontainer" style="display:none">
       <div class="row p-3 mb-2 bg-primary text-white" style="margin:none">
         <div class="col-lg-2">
           AI Generated FHIR Query:
@@ -101,12 +105,15 @@
        $("#gquery").focus();
        $("#gquery").keyup(function(e) {
         if ((e.keyCode == 13 || e.keyCode == 10) && !e.shiftKey) {
-          $('#myModal').modal('show');
-          let gptquery=$("#gquery").val();
-          queryAI(gptquery);
+          sendit();
         }
       });
     });
+    function sendit() {
+      $('#myModal').modal('show');
+      let gptquery=$("#gquery").val();
+      queryAI(gptquery);
+    }
   </script>
 </body>
 
