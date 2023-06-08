@@ -103,8 +103,8 @@ function queryFHIR(data) {
 function queryAI(data) {
     getTokenPopup(tokenRequest)
     .then(response => {
-        if (!data.startsWith('*')) {
-            data="Generate FHIR Query syntax to " + data;
+        if (!data["query"].startsWith('*')) {
+            data["query"]="Generate FHIR Query syntax to " + data["query"];
         }
         callaifunc(aiConfig.aiEndpoint, aiConfig.aiKey, data, updateUI);
     }).catch(error => {
@@ -112,11 +112,11 @@ function queryAI(data) {
     });
     
 }
-function generateSummary(data) {
+function generateSummary(sumtype,data) {
     $('#myModal').modal('show');
     getTokenPopup(tokenRequest)
     .then(response => {
-        genaisummary(data,response.accessToken);
+        genaisummary(sumtype,data,response.accessToken);
     }).catch(error => {
         console.error(error);
     });

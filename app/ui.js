@@ -16,7 +16,7 @@ function showWelcomeMessage(username) {
 function mineAIResponseforFHIR(response,data) {
     var retval={};
     var airesp = response["choices"][0]["message"]["content"];
-    if (data.startsWith('*')) {
+    if (data["query"].startsWith('*')) {
         return airesp;
     }
     var lines = airesp.split('\n');
@@ -56,6 +56,17 @@ function mineAIResponseforFHIR(response,data) {
     retval["body"] = body;
     return retval;
 }
+function summaryModal(title,data) {
+    document.getElementById("summodelLabel").innerHTML = title;
+    sumbody.innerHTML="";
+    var display=data;
+    //var display="<pre>";
+    //display+=data; 
+    //display+="</pre>";
+    sumbody.insertAdjacentHTML('afterbegin',display); 
+    $('#myModal').modal('hide');
+    $('#summarymodal').modal('show');
+}
 function updateUI(response, endpoint, data) {
     console.log(endpoint + ' responded at: ' + new Date().toString());
     if (endpoint === fhirConfig.fhirEndpoint) {
@@ -74,10 +85,7 @@ function updateUI(response, endpoint, data) {
     } else if (endpoint === aiConfig.aiEndpoint) {
         if (response["aisummary"]) {
             var airesp = response["aisummary"]["choices"][0]["message"]["content"];
-            sumbody.innerHTML="";
-            sumbody.insertAdjacentHTML('afterbegin',airesp); 
-            $('#myModal').modal('hide');
-            $('#summarymodal').modal('show');
+            summaryModal(data["sumtype"] +" Summary",airesp);
         } else {
             response=mineAIResponseforFHIR(response,data);
             if (response["query"]) {

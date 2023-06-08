@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <title>ChatGPT AHDS Explorer</title>
   <link rel="SHORTCUT ICON" href="./favicon.svg" type="image/x-icon">
-
    <!-- msal.min.js can be used in the place of msal.js; included msal.js to make debug easy -->
   <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.js"
     integrity="sha384-o4ufwq3oKqc7IoCcR08YtZXmgOljhTggRwxP2CLbSqeXGtitAxwYaUln/05nJjit"
@@ -54,15 +53,15 @@
   <div class="container" id="fhirrespcontainer" style="display:none">
   </div>
   <div id="myModal" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered justify-content-center" role="document">
+    <div class="modal-dialog modal-dialog-centered justify-content-center modal-lg" style="min-width:50%;" role="document">
         <span class="fa fa-spinner fa-spin fa-3x"></span>
     </div>
 </div>
-<div class="modal fade" id="summarymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="summarymodal" tabindex="-1" role="dialog" aria-labelledby="summodelLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Patient Summary</h5>
+        <h5 class="modal-title" id="summodelLabel">Patient Summary</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -112,7 +111,8 @@
     function sendit() {
       $('#myModal').modal('show');
       let gptquery=$("#gquery").val();
-      queryAI(gptquery);
+      let data={"query":gptquery};
+      queryAI(data);
     }
   </script>
 </body>

@@ -3,11 +3,14 @@ function constructCards(data) {
     if (data && data["entry"]) {
         output = '<div class="row row-cols-1 row-cols-md-3 g-4">';
         data['entry'].forEach(item => {
-            output+=`<div class="col">
+            var rid="cid"+item["resource"]["id"];
+            sessionStorage.setItem(rid,"<pre style=\"zoom: 75%\">" + JSON.stringify(item["resource"],null,4) + "</pre>");
+            output+=`<div class="col" id="rid${item["resource"]["id"]}">
                         <div class="card h-100">
                         <div class="card-body">
                             <h5 class="card-title">${item["resource"]["resourceType"]}</h5>
                             <div style="display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%"><p style="margin-bottom: 0px">${item["resource"]["id"]}</p></div>`
+                            output+="<img src='infoicon.png' alt='Display Full Resource' width='20' height='20' onclick='summaryModal(\"Resource\",sessionStorage.getItem(\"" + rid + "\"))'>";
                 switch(item["resource"]["resourceType"]) {
                     case "Patient":
                         output+=patientTemplate(item);
@@ -76,7 +79,7 @@ function patientTemplate(item) {
                 }
                 retval+=`<p class="card-text">${addr}</p>`;
             }
-            retval+=`<a href="javascript:generateSummary('${item["resource"]["id"]}')" class="btn btn-primary">Generate Summary</a>`;
+            retval+=`<a href="javascript:generateSummary('Patient','${item["resource"]["id"]}')" class="btn btn-primary">Condition Summary</a>`;
             
         } else {
             return baseTemplate(item);
@@ -123,7 +126,7 @@ function observationTemplate(item) {
         }
         if (item["resource"]["subject"]["reference"]) {
             var patid=item["resource"]["subject"]["reference"].substring(8);
-            retval+=`<a href="javascript:generateSummary('${patid}')" class="btn btn-primary">Generate Summary</a>`;
+            retval+=`<a href="javascript:generateSummary('Observation','${patid}')" class="btn btn-primary">Generate Summary</a>`;
         }    
     }
     return retval;

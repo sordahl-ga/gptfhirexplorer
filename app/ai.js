@@ -1,7 +1,3 @@
-/** 
- * Helper function to call MS Graph API endpoint
- * using the authorization bearer token scheme
-*/
 function callaifunc(endpoint, token, data,callback) {
     const headers = new Headers();
     
@@ -16,7 +12,7 @@ function callaifunc(endpoint, token, data,callback) {
                 },
                 {
                     "role": "user",
-                    "content": data                
+                    "content": data["query"]                
                 }
             ],
             "temperature":0.2,
@@ -29,21 +25,32 @@ function callaifunc(endpoint, token, data,callback) {
     };
     
 
-    console.log('request made to ai server at: ' + new Date().toString());
+    console.log('request made to ai server at: ' + new Date().toString() + '\nBody:'+JSON.stringify(body,null,4));
     var endpoint=`https://${aiConfig.aiResourceName}.openai.azure.com/openai/deployments/${aiConfig.aiDeploymentName}/chat/completions?api-version=${aiConfig.aiAPIVersion}`;
     fetch(endpoint, options)
         .then(response => response.json())
         .then(response => callback(response, aiConfig.aiEndpoint,data))
-        .catch(error => console.log(error));
+        .catch(error => {console.log(error); summaryModal("Server Error","An Error Occured on the Server...Try Again or Check Logs")});
 }
-function genaisummary(data,token) {
+function genaisummary(summarytype,data,token) {
     //Load Patient from FHIR
-    let fhirdata = {"query": fhirConfig.fhirEndpoint + "/Condition?patient=" + data + "&_include=Condition:patient","method":"GET"};
+    let fhirdata ="";
+    if (summarytype==="Patient") {
+        fhirdata={"query": fhirConfig.fhirEndpoint + "/Patient?_id=" + data + "&_revinclude=Condition:patient","method":"GET","sumtype":"Patient"};
+    } else if (summarytype==="Observation") {
+        fhirdata={"query": fhirConfig.fhirEndpoint + "/Observation?subject=" + data +"&_count=7","method":"GET","sumtype":"Observation"};     
+    }
     callfhirserver(aiConfig.aiEndpoint,token,fhirdata,ailoadpatientdata);
 }
 function ailoadpatientdata(response, endpoint,data) {
-    let query="Given the following FHIR Bundle describe the patient and summarize patients medical history:\n" + JSON.stringify(response);
-    callaifunc(aiConfig.aiEndpoint,aiConfig.aiKey,query,aidisplaysummary);
+    let query="";
+    if (data["sumtype"]==="Patient") {
+        query="Given the following FHIR Bundle describe the patient and summarize patients medical history:\n" + JSON.stringify(response);
+    } else if (data["sumtype"]==="Observation") {
+        query="Given the following FHIR Bundle summarize the Observation findings in an HTML table:\n" + JSON.stringify(response);     
+    }
+    data["query"]=query;
+    callaifunc(aiConfig.aiEndpoint,aiConfig.aiKey,data,aidisplaysummary);
 
    
 }

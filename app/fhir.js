@@ -23,6 +23,6 @@ function callfhirserver(endpoint, token, data, callback) {
     console.log('request made to FHIR server at: ' + new Date().toString() + ' query: ' + data["query"]);
     fetch(data["query"], options)
         .then(response => response.json())
-        .then(response => callback(response, endpoint,data))
+        .then(response => callback(response,endpoint,data))
         .catch(error => console.log(error));
 }
