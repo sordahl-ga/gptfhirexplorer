@@ -1,0 +1,16 @@
+{
+	"aiConfig": {
+		"aiResourceName": "<ai resourcename>",
+		"aiDeploymentName": "<deploymentname>",
+		"aiAPIVersion": "2023-03-15-preview",
+		"aiKey": "<key>"
+	},
+	"fhirConfig": {
+		"fhirEndpoint": "https://<fhirserver>.fhir.azurehealthcareapis.com"
+	},
+	"authConfig": {
+		"clientId": "<clientid>",
+		"authority": "https://login.microsoftonline.com/<tenant>",
+		"redirectUri": "https://<app>.azurewebsites.net"
+	}
+}
