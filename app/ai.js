@@ -38,7 +38,7 @@ function genaisummary(summarytype,data,token) {
     if (summarytype==="Patient") {
         fhirdata={"query": fhirConfig.fhirEndpoint + "/Patient?_id=" + data + "&_revinclude=Condition:patient","method":"GET","sumtype":"Patient"};
     } else if (summarytype==="Observation") {
-        fhirdata={"query": fhirConfig.fhirEndpoint + "/Observation?subject=" + data +"&_count=7","method":"GET","sumtype":"Observation"};     
+        fhirdata={"query": fhirConfig.fhirEndpoint + "/Observation?subject=" + data +"&_include=Observation:subject&_count=7","method":"GET","sumtype":"Observation"};     
     }
     callfhirserver(aiConfig.aiEndpoint,token,fhirdata,ailoadpatientdata);
 }
@@ -47,7 +47,7 @@ function ailoadpatientdata(response, endpoint,data) {
     if (data["sumtype"]==="Patient") {
         query="Given the following FHIR Bundle describe the patient and summarize patients medical history:\n" + JSON.stringify(response);
     } else if (data["sumtype"]==="Observation") {
-        query="Given the following FHIR Bundle summarize the Observation findings in an HTML table:\n" + JSON.stringify(response);     
+        query="Given the following FHIR Bundle summarize the findings for a history and physical report:\n" + JSON.stringify(response);     
     }
     data["query"]=query;
     callaifunc(aiConfig.aiEndpoint,aiConfig.aiKey,data,aidisplaysummary);
