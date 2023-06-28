@@ -16,14 +16,19 @@ app.use(morgan('dev'));
 //app.use(express.static('app'));
 app.use(express.static('app', {
     setHeaders: function (res, path, stat) {
-      res.set('Set-Cookie', "config=" + process.env.NODE_CONFIG+";Path=/")
+        // Encoding the value to base64
+      const encodedValue = Buffer.from(process.env.NODE_CONFIG).toString('base64');
+      res.set('Set-Cookie', "config=" + encodedValue +";Path=/") 
     }
   }));
+
+
 // Set up a route for index.html
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname + '/app/index.html'));
+      res.sendFile(path.join(__dirname + '/app/index.html'));
 });
 
 // Start the server.
 app.listen(port);
+
 console.log(`Listening on port ${port}...`);
